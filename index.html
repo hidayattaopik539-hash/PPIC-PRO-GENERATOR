@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PPIC Production Order Generator (Editable Output)</title>
+    <style>
+        /* TEMA: HITAM & ORANYE DENGAN BATIK BACKGROUND */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            /* --- PERUBAHAN BATIK BACKGROUND DI SINI --- */
+            background-color: #1a1a1a; 
+            background-image: url('https://www.transparenttextures.com/patterns/batik-tanah.png');
+            background-attachment: fixed; 
+            /* ------------------------------------------ */
+            color: #ffffff; 
+        }
+        .container { 
+            max-width: 95%; 
+            margin: auto; 
+            /* Tambahkan background semi-transparan untuk memastikan teks di dalam container tetap terbaca */
+            background-color: rgba(26, 26, 26, 0.95); 
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h2, h3, h4 {
+            color: #ff9900; 
+        }
+        /* Style untuk Logo */
+        #app-logo {
+            display: block;
+            margin: 10px auto 20px auto; 
+            width: 150px; 
+            height: auto;
+            border-radius: 5px;
+            border: 1px solid #ff9900;
+        }
+        textarea { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 5px 0 10px 0; 
+            display: inline-block; 
+            border: 1px solid #ff9900; 
+            box-sizing: border-box;
+            background-color: #2e2e2e; 
+            color: #ffffff; 
+        }
+        input[type="text"] { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 5px 0 10px 0; 
+            display: inline-block; 
+            border: 1px solid #ff9900; 
+            box-sizing: border-box;
+            background-color: #2e2e2e;
+            color: #ffffff;
+            /* Style khusus untuk input di tabel */
+            font-size: 11px;
+            padding: 2px;
+            margin: 0;
+            border: none;
+            background-color: transparent;
+        }
+        button { 
+            background-color: #ff9900; 
+            color: #1a1a1a; 
+            padding: 10px 15px; 
+            margin: 8px 0; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold;
+        }
+        button:hover { 
+            opacity: 0.9; 
+            background-color: #cc7a00; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            table-layout: fixed; 
+        }
+        th, td { 
+            border: 1px solid #444444; 
+            padding: 0; 
+            text-align: left; 
+            font-size: 12px;
+            background-color: #2e2e2e; 
+            color: #ffffff; 
+        }
+        th { 
+            background-color: #444444; 
+            color: #ff9900; 
+            border-bottom: 2px solid #ff9900;
+            padding: 8px;
+        }
+        .input-group { 
+            display: flex; 
+            gap: 20px; 
+        }
+        .input-group > div { 
+            flex: 1; 
+        }
+        .small-input-group {
+            display: flex; gap: 10px;
+        }
+        .small-input-group > div {
+            flex: 1;
+        }
+        hr {
+            border-top: 1px solid #ff9900; 
+        }
+        .developer-info {
+            margin-top: 50px;
+            padding: 10px;
+            border-top: 1px dashed #444444;
+            color: #888888;
+            font-size: 11px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏭 PPIC Production Order Generator (Tabel Output Dapat Di-Edit)</h2>
+        
+        <img id="app-logo" src="Gemini_Generated_Image_83bvvi83bvvi83bv.jpg" alt="Logo PPIC Nabati Majalengka">
+        
+        <p>Tempel data dari tiga sumber master yang berbeda untuk menghasilkan Production Order.</p>
+        
+        <hr>
+
+        <h3>1. Input Konstanta & Generate</h3>
+        <div class="small-input-group">
+            <div>
+                <label for="startDate">Basic Start Date (YYYYMMDD):</label>
+                <input type="text" id="startDate" value="20251125" maxlength="8" required> 
+            </div>
+            <div>
+                <label for="plantCode">PLANT Code:</label>
+                <input type="text" id="plantCode" value="K118" maxlength="4" required> 
+            </div>
+            <div>
+                <label for="orderType">ORDER TYPE:</label>
+                <input type="text" id="orderType" value="ZP13" maxlength="4" required> 
+            </div>
+        </div>
+        <button type="button" id="generateAllBtn">⚙️ GENERATE ALL PRODUCTION ORDERS</button>
+        
+        <hr>
+
+        <h3>2. Input Database Acuan (Tempel Data Master dari Spreadsheet)</h3>
+        <div class="input-group">
+            <div>
+                <h4>A. Master SKU Mapping & QTY</h4>
+                <p>Data Produksi Target (WAJIB 9 KOLOM, pisahkan dengan ;):</p>
+                <p style="font-family: monospace; font-weight: bold; color: #ff9900; margin: 0;">SKU;MASTER_LINE;ALT;RPH;JK;QTY_PAGI;QTY_SIANG;QTY_MALAM;TOTAL_QTY</p>
+                <textarea id="skuMasterInput" rows="12" placeholder="Contoh:&#10;304157ZP13;A11005;0000;5.082;24;1694;1694;1694;5082&#10;304157ZP13;C05001;0000;5.082;24;0;0;5082;5082 (SKU sama, Line beda)"></textarea>
+                <button type="button" id="loadSkuDataBtn">Load Master SKU</button>
+                <p id="skuLoadStatus" style="font-weight: bold; margin-top: 5px;"></p>
+            </div>
+
+            <div>
+                <h4>B. Master Line & Jam Kerja</h4>
+                <p>Data Acuan (WAJIB 5 KOLOM, pisahkan dengan ;):</p>
+                <p style="font-family: monospace; font-weight: bold; color: #ff9900; margin: 0;">KODE_LINE;GEDUNG;SHIFT;JAM_START;JAM_END</p>
+                <textarea id="lineMasterInput" rows="12" placeholder="Contoh:&#10;C05001;GDC;1;060000;140000&#10;C05001;GDC;2;140000;220000&#10;A11005;GDA;1;060000;140000"></textarea>
+                <button type="button" id="loadLineDataBtn">Load Master Line</button>
+                <p id="lineLoadStatus" style="font-weight: bold; margin-top: 5px;"></p>
+            </div>
+        </div>
+        
+        <hr>
+
+        <h3>3. Production Orders Siap Upload (EDIT DI SINI)</h3>
+        <table id="po-table">
+            <thead>
+                <tr>
+                    <th style="width: 3%;">NO</th>
+                    <th style="width: 5%;">PLANT</th>
+                    <th style="width: 10%;">SKU</th>
+                    <th style="width: 5%;">TYPE</th>
+                    <th style="width: 7%;">TGL</th> 
+                    <th style="width: 7%;">TGL</th> 
+                    <th style="width: 7%;">RPH</th>
+                    <th style="width: 5%;">ALT</th>
+                    <th style="width: 8%;">LINE</th>
+                    <th style="width: 6%;">GEDUNG</th>
+                    <th style="width: 5%;">KEPERLUAN</th> 
+                    <th style="width: 4%;">SHIFT</th>
+                    <th style="width: 8%;">QTY</th>
+                    <th style="width: 6%;">JAM</th> 
+                    <th style="width: 6%;">JAM</th> 
+                    <th style="width: 4%;">JK</th>
+                    <th style="width: 5%;">SPEED</th>
+                    <th style="width: 5%;">LIMIT/UNLIMIT</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button id="generate-csv-btn">⬇️ Generate & Download CSV File (Berdasarkan Data yang Sudah Di-Edit)</button>
+        
+        <div class="developer-info">
+            Developed by Taopik Hidayat, PPIC Planner
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
